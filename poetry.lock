@@ -1134,6 +1134,16 @@ files = [
 tomli = {version = ">=1.1.0", markers = "python_version < \"3.11\""}
 
 [[package]]
+name = "pyslet"
+version = "0.7.20170805"
+description = "Pyslet: Python package for Standards in Learning, Education and Training"
+optional = false
+python-versions = "*"
+files = [
+    {file = "pyslet-0.7.20170805.tar.gz", hash = "sha256:d4cbb85e16d58a8f990e15e711266ec2fe30a4dc4626c4d839bb7b7824afdf6c"},
+]
+
+[[package]]
 name = "pytest"
 version = "7.4.4"
 description = "pytest: simple powerful testing with Python"
@@ -1645,4 +1655,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8.1,<4.0"
-content-hash = "a4f16b1fd1f749aac8d25a07bcdc1fee72932108a2133076a311e376ea3e59e3"
+content-hash = "ed1aeccafc78d76e40b69ead5b6f8539f41ac581a20bfc8321aa72fee0adfdc5"

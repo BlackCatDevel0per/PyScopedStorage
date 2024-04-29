@@ -141,20 +141,24 @@ python = ">=3.8.1,<4.0"
 
 
 [tool.poetry.group.base]
+optional = false
 
 [tool.poetry.group.base.dependencies]
 plyer = "^2.1.0"
 aiofiles = "^23.2.1"
 
+[tool.poetry.group.advanced]
+
+[tool.poetry.group.advanced.dependencies]
+pyslet = "^0.7.20170805"
+
 [tool.poetry.group.poetry-plugins]
-optional = true
 
 [tool.poetry.group.poetry-plugins.dependencies]
 poetry-plugin-commands = "^0.0.9"
 poetry-plugin-deps-juice = "^0.0.2"
 
 [tool.poetry.group.dev]
-optional = true
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.2"
