@@ -6,10 +6,10 @@ from typing import TYPE_CHECKING
 from plyer.utils import platform
 
 if platform == 'android':
-	from .android_objects import ContentResolver, DocumentsContract
+	from .android_objects import ContentProvider, ContentResolver, DocumentsContract
 
 from .io import async_open
-from .utils import get_fd_from_android_uri
+from .utils import generate_file_uri_from_access_uri, get_fd_from_android_uri, scoped_file_exists
 
 if TYPE_CHECKING:
 	from io import BufferedReader, BufferedWriter, TextIOWrapper
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 	from aiofiles.threadpool.text import AsyncTextIOWrapper
 
 
-def make_scoped_file(
+def scoped_file_open(
 	access_uri: 'android.net.Uri',
 	name: str,
 	mode: str = 'w',
@@ -26,10 +26,24 @@ def make_scoped_file(
 ) -> int:
 	"""Make file using access (usually directory) android uri and return the file descriptor."""
 	# TODO: Optionally return file uri
-	file_uri = dc_make_doc(
-		access_uri,
-		name, mime,
-	)
+	file_uri: 'android.net.Uri' = generate_file_uri_from_access_uri(access_uri, name)
+	if scoped_file_exists(file_uri):
+		if mode == 'x':
+			del file_uri
+			raise FileExistsError
+
+	elif mode in ('r', 'rb', 'r+', 'rb+'):
+		raise FileNotFoundError
+
+	else:
+		del file_uri
+		# "w/wb", "a/ab", "r+/rb+"
+		# "a/ab" - because usually it's makes new file if not already exists to append
+		file_uri = dc_make_doc(
+			access_uri,
+			name, mime,
+		)
+
 
 	ret = get_fd_from_android_uri(file_uri, mode)
 	del file_uri
@@ -52,23 +66,37 @@ def dc_make_doc(
 	)
 
 
-def make_scoped_file_sync(
+def dc_open_doc(
+	access_uri: 'android.net.Uri',
+	name: str,
+) -> 'android.net.Uri':
+	"""Open file using access (usually directory) android uri and return the file uri."""
+	# TODO: Optionally return file uri
+	# FIXME: Raise error if file exists..
+	return ContentProvider.createDocument(
+		ContentResolver,
+		access_uri,
+		mime, name,
+	)
+
+
+def scoped_file_open_sync(
 	access_uri: 'android.net.Uri',
 	name: str,
 	mode: str = 'w',
 	mime: str = '*/*',
 ) -> TextIOWrapper | BufferedReader | BufferedWriter:
-	return os_fdopen(make_scoped_file(access_uri, name, mode, mime), mode)
+	return os_fdopen(scoped_file_open(access_uri, name, mode, mime), mode)
 
 
-def make_scoped_file_async(
+def scoped_file_open_async(
 	access_uri: 'android.net.Uri',
 	name: str,
 	mode: str = 'w',
 	mime: str = '*/*',
 ) -> AsyncTextIOWrapper | AsyncBufferedReader | AsyncBufferedIOBase:
-	return async_open(make_scoped_file(access_uri, name, mode, mime), mode)
+	return async_open(scoped_file_open(access_uri, name, mode, mime), mode)
 
 
-mksf_sync = make_scoped_file_sync
-mksf_async = make_scoped_file_async
+sfopen_sync = scoped_file_open_sync
+sfopen_async = scoped_file_open_async

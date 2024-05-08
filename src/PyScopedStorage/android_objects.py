@@ -12,3 +12,6 @@ from plyer.platforms.android.filechooser import DocumentsContract, Intent  # noq
 
 ContentResolver = mActivity.getContentResolver()
 Uri = autoclass('android.net.Uri')
+
+# TODO: Try to replace `DocumentsContract`
+ContentProvider = autoclass('android.content.ContentProvider')

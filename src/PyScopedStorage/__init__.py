@@ -1,1 +1,1 @@
-from .tools import mksf_async, mksf_sync  # noqa: F401
+from .tools import sfopen_async, sfopen_sync  # noqa: F401
