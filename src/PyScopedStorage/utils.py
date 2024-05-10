@@ -49,11 +49,17 @@ py_open2java_openfd: 'Final[Dict[str, str]]' = {  # noqa: UP006,UP037
 	# java "w" -> "wt"
 	'w': 'wt',
 	'wb': 'wt',
+	'w+': 'wt',
+	'wb+': 'wt',
 
 	'x': 'wt',  # existent check is inside sfopen_{sync/async}
+	'xb': 'wt',
 
 	'a': 'wa',
 	'ab': 'wa',
+
+	'a+': 'rwa',
+	'ab+': 'rwa',
 
 	# no truncate, because
 	# usually in stdlib `io.open` if file will just read, it's doesn't be overwritten
@@ -62,6 +68,7 @@ py_open2java_openfd: 'Final[Dict[str, str]]' = {  # noqa: UP006,UP037
 }
 
 
+# TODO: Handle access errors..
 def get_fd_from_android_uri(
 	content_uri: 'android.net.Uri',
 	mode: str = 'r',
@@ -119,6 +126,7 @@ def get_fd_from_struri(
 # 	return ret
 
 
+# TODO: Handle parse errors..
 def generate_file_uri_from_access_uri(access_uri: 'android.net.Uri', name: str) -> 'android.net.Uri':
 	dir_name: str = DocumentsContract.getTreeDocumentId(access_uri)
 	doc_file: str = f'{dir_name}/{name}'
