@@ -121,4 +121,5 @@ sfopen_sync = scoped_file_open_sync
 sfopen_async = scoped_file_open_async
 
 smkdir_sync = scoped_mkdir_sync
-smkdir_async = wrap2async(scoped_mkdir_sync)
+scoped_mkdir_async = wrap2async(scoped_mkdir_sync)
+smkdir_async = scoped_mkdir_async
