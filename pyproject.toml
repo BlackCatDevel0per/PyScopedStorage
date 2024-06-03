@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "PyScopedStorage"
-version = "0.0.6"
+version = "0.0.7"
 description = "Python library to simplify storage interaction in Android apps."
 # readme = "README.md"  # TODO..
 authors = ["BlackCatDevel0per <bcdev@mail.ru>"]
