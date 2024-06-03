@@ -7,7 +7,7 @@ from plyer.utils import platform
 if platform == 'android':
 	from jnius.jnius import JavaException
 
-	from .android_objects import ContentResolver, DocumentsContract, Uri
+	from .android_objects import ContentResolver, DCDocument, DocumentsContract, Uri
 
 PYSLET_AVAILABLE: bool = True
 
@@ -22,7 +22,33 @@ if TYPE_CHECKING:
 	from pyslet.rfc2396 import URI
 
 
-def scoped_file_exists(file_uri: 'jni[android.net.Uri]') -> bool:
+def scoped_res_exists(file_uri: 'jni[android.net.Uri]') -> bool:
+	c: 'jni[android.database.Cursor] | None' = None
+	try:
+		c = ContentResolver.query(
+			file_uri,
+			(DCDocument.COLUMN_DOCUMENT_ID,),
+			# [DCDocument.COLUMN_DOCUMENT_ID],
+			None, None, None,
+		)
+		return c.getCount() > 0
+	except JavaException as e:
+		if e.innermessage is None or 'java.io.FileNotFoundException' in e.innermessage:
+			# FIXME: Log fail..
+			del e
+			return False
+
+		raise e
+
+	# All's fine
+	# TODO: Quite close like in `DocumentsContractApi19.java`
+	if c is not None:
+		c.close()
+
+	return True
+
+
+def _old_scoped_file_exists(file_uri: 'jni[android.net.Uri]') -> bool:
 	try:
 		ins = ContentResolver.openInputStream(file_uri)
 	except JavaException as e:

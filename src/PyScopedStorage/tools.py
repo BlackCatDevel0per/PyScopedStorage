@@ -9,7 +9,7 @@ if platform == 'android':
 	from .android_objects import ContentProvider, ContentResolver, DCDocument, DocumentsContract
 
 from .io import async_open
-from .utils import generate_file_uri_from_access_uri, get_fd_from_android_uri, scoped_file_exists
+from .utils import generate_file_uri_from_access_uri, get_fd_from_android_uri, scoped_res_exists
 
 if TYPE_CHECKING:
 	from io import BufferedReader, BufferedWriter, TextIOWrapper
@@ -27,9 +27,8 @@ def scoped_file_open(
 	"""Make file using access (usually directory) android uri and return the file descriptor."""
 	# TODO: Optionally return file uri
 	file_uri: 'jni[android.net.Uri]' = generate_file_uri_from_access_uri(access_uri, name)
-	if scoped_file_exists(file_uri):
+	if scoped_res_exists(file_uri):
 		if mode == 'x':
-			del file_uri
 			raise FileExistsError
 
 	elif mode in ('r', 'rb', 'r+', 'rb+'):
@@ -46,7 +45,6 @@ def scoped_file_open(
 
 
 	ret = get_fd_from_android_uri(file_uri, mode)
-	del file_uri
 
 	return ret
 
@@ -98,15 +96,25 @@ def scoped_file_open_async(
 	return async_open(scoped_file_open(access_uri, name, mode, mime), mode)
 
 
+class DirectoryExistsError(FileExistsError):
+	pass
+
+
 def scoped_mkdir_sync(
 	access_uri: 'jni[android.net.Uri]',
 	name: str,
+	*,
+	exist_ok: bool = False,
 ) -> 'jni[android.net.Uri]':
 	# Why Google doesn't made separate method for this stuff?
-	return DocumentsContract.createDocument(
+	uri = DocumentsContract.createDocument(
 		ContentResolver,
 		access_uri, DCDocument.MIME_TYPE_DIR, name,
 	)
+	if scoped_res_exists(uri) and not exist_ok:
+		# TODO: More informative message..
+		raise DirectoryExistsError
+	return uri
 
 
 async def scoped_mkdir_async(
