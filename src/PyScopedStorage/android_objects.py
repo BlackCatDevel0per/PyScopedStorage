@@ -15,3 +15,5 @@ Uri = autoclass('android.net.Uri')
 
 # TODO: Try to replace `DocumentsContract`
 ContentProvider = autoclass('android.content.ContentProvider')
+
+DCDocument = autoclass('android.provider.DocumentsContract$Document')

@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from plyer.utils import platform
 
 if platform == 'android':
-	from .android_objects import ContentProvider, ContentResolver, DocumentsContract
+	from .android_objects import ContentProvider, ContentResolver, DCDocument, DocumentsContract
 
 from .io import async_open
 from .utils import generate_file_uri_from_access_uri, get_fd_from_android_uri, scoped_file_exists
@@ -98,5 +98,26 @@ def scoped_file_open_async(
 	return async_open(scoped_file_open(access_uri, name, mode, mime), mode)
 
 
+def scoped_mkdir_sync(
+	access_uri: 'android.net.Uri',
+	name: str,
+) -> 'jni[android.net.Uri]':
+	# Why Google doesn't made separate method for this stuff?
+	return DocumentsContract.createDocument(
+		ContentResolver,
+		access_uri, DCDocument.MIME_TYPE_DIR, name,
+	)
+
+
+async def scoped_mkdir_async(
+	access_uri: 'android.net.Uri',
+	name: str,
+) -> 'jni[android.net.Uri]':
+	return scoped_mkdir_sync(access_uri, name)
+
+
 sfopen_sync = scoped_file_open_sync
 sfopen_async = scoped_file_open_async
+
+smkdir_sync = scoped_mkdir_sync
+smkdir_async = scoped_mkdir_async
