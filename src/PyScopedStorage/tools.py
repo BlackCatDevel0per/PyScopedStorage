@@ -19,14 +19,14 @@ if TYPE_CHECKING:
 
 
 def scoped_file_open(
-	access_uri: 'android.net.Uri',
+	access_uri: 'jni[android.net.Uri]',
 	name: str,
 	mode: str = 'w',
 	mime: str = '*/*',
 ) -> int:
 	"""Make file using access (usually directory) android uri and return the file descriptor."""
 	# TODO: Optionally return file uri
-	file_uri: 'android.net.Uri' = generate_file_uri_from_access_uri(access_uri, name)
+	file_uri: 'jni[android.net.Uri]' = generate_file_uri_from_access_uri(access_uri, name)
 	if scoped_file_exists(file_uri):
 		if mode == 'x':
 			del file_uri
@@ -52,10 +52,10 @@ def scoped_file_open(
 
 
 def dc_make_doc(
-	access_uri: 'android.net.Uri',
+	access_uri: 'jni[android.net.Uri]',
 	name: str,
 	mime: str = '*/*',
-) -> 'android.net.Uri':
+) -> 'jni[android.net.Uri]':
 	"""Make file using access (usually directory) android uri and return the file uri."""
 	# TODO: Optionally return file uri
 	# TODO: Raise error if file exists..
@@ -67,9 +67,9 @@ def dc_make_doc(
 
 
 def dc_open_doc(
-	access_uri: 'android.net.Uri',
+	access_uri: 'jni[android.net.Uri]',
 	name: str,
-) -> 'android.net.Uri':
+) -> 'jni[android.net.Uri]':
 	"""Open file using access (usually directory) android uri and return the file uri."""
 	# TODO: Optionally return file uri
 	# FIXME: Raise error if file exists..
@@ -99,7 +99,7 @@ def scoped_file_open_async(
 
 
 def scoped_mkdir_sync(
-	access_uri: 'android.net.Uri',
+	access_uri: 'jni[android.net.Uri]',
 	name: str,
 ) -> 'jni[android.net.Uri]':
 	# Why Google doesn't made separate method for this stuff?

@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 	from pyslet.rfc2396 import URI
 
 
-def scoped_file_exists(file_uri: 'android.net.Uri') -> bool:
+def scoped_file_exists(file_uri: 'jni[android.net.Uri]') -> bool:
 	try:
 		ins = ContentResolver.openInputStream(file_uri)
 	except JavaException as e:
@@ -84,7 +84,7 @@ def get_fd_from_android_uri(
 	# TODO: Raise another error..
 	jp_mode = py_open2java_openfd[mode]
 
-	fd_obj: 'android.os.ParcelFileDescriptor' = ContentResolver.openFileDescriptor(
+	fd_obj: 'jni[android.os.ParcelFileDescriptor]' = ContentResolver.openFileDescriptor(
 		content_uri,
 		jp_mode,
 	)
@@ -111,7 +111,10 @@ def get_fd_from_struri(
 
 # TODO: Speed check..
 # Weak.. Do we really need pyslet's rfc2396?
-# def _pyslet_generate_file_uri_from_access_uri(access_uri: 'android.net.Uri', name: str) -> 'android.net.Uri':
+# def _pyslet_generate_file_uri_from_access_uri(
+	# access_uri: 'jni[android.net.Uri]',
+# 	name: str,
+# ) -> 'jni[android.net.Uri]':
 # 	py_uri: URI = URI(access_uri.toString())
 # 	doc_file: str = f'{py_uri.get_file_name()}/{name}'
 
@@ -127,7 +130,7 @@ def get_fd_from_struri(
 
 
 # TODO: Handle parse errors..
-def generate_file_uri_from_access_uri(access_uri: 'android.net.Uri', name: str) -> 'android.net.Uri':
+def generate_file_uri_from_access_uri(access_uri: 'jni[android.net.Uri]', name: str) -> 'jni[android.net.Uri]':
 	dir_name: str = DocumentsContract.getTreeDocumentId(access_uri)
 	doc_file: str = f'{dir_name}/{name}'
 	del dir_name

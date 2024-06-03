@@ -49,7 +49,7 @@ def pyss_open_dir(**kwargs: dict[str, Any]) -> None:
 		'on_selection', filechooser._handle_selection,  # noqa: SLF001
 	)
 
-	intent: 'android.content.Intent' = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+	intent: 'jni[android.content.Intent]' = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
 
 	# TODO: Handle persistent req
 
@@ -62,7 +62,7 @@ def pyss_on_activity_result(self, request_code: int, result_code: int, data: Int
 	sel = self.selection_raw if not isinstance(self.selection_raw, list) else self.selection_raw[0]
 	# FIXME: Clean `self.selection_raw`
 	# TODO: Ignore on file calls..?
-	resolver: 'android.content.ContentResolver' = mActivity.getContentResolver()
+	resolver: 'jni[android.content.ContentResolver]' = mActivity.getContentResolver()
 	resolver.takePersistableUriPermission(
 		sel,
 		# TODO: Make flags as option..
